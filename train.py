@@ -6,7 +6,6 @@ import numpy as np
 import os
 import time
 import datetime
-import argparse
 import data_helpers
 from text_cnn import TextCNN
 import pdb
@@ -15,45 +14,27 @@ import pdb
 # ==================================================
 
 # Model Hyperparameters
-parser = argparse.ArgumentParser()
-parser.add_argument("--embedding_dim", type=int, default=128, help="Dimensionality of character embedding (default: 128)")
-parser.add_argument("--filter_sizes", type=str, default="1,2,3,4,5,6,8", help="Comma-separated filter sizes (default: '1,2,3,4,5,6,8')")
-parser.add_argument("--num_filters", type=str, default="50,100,150,150,200,200,200", help="Number of filters per filter size (default: 50,100,150,150,200,200,200)")
-parser.add_argument("--dropout_keep_prob", type=float, default=0.5, help="Dropout keep probability (default: 0.5)")
-parser.add_argument("--l2_reg_lambda", type=float, default=0.0, help="L2 regularizaion lambda (default: 0.0)")
+tf.flags.DEFINE_integer("embedding_dim", 128, "Dimensionality of character embedding (default: 128)")
+tf.flags.DEFINE_string("filter_sizes", "1,2,3,4,5,6,8", "Comma-separated filter sizes (default: '1,2,3,4,5,6,8')")
+tf.flags.DEFINE_string("num_filters", "50,100,150,150,200,200,200", "Number of filters per filter size (default: 50,100,150,150,200,200,200)")
+tf.flags.DEFINE_float("dropout_keep_prob", 0.5, "Dropout keep probability (default: 0.5)")
+tf.flags.DEFINE_float("l2_reg_lambda", 0.0, "L2 regularizaion lambda (default: 0.0)")
 
 # Training parameters
-parser.add_argument("--batch_size", type=int, default=32, help="Batch Size (default: 32)")
-parser.add_argument("--num_epochs", type=int, default=200, help="Number of training epochs (default: 200)")
-parser.add_argument("--evaluate_every", type=int, default=100, help="Evaluate model on dev set after this many steps (default: 100)")
-parser.add_argument("--checkpoint_every", type=int, default=100, help="Save model after this many steps (default: 100)")
+tf.flags.DEFINE_integer("batch_size", 32, "Batch Size (default: 32)")
+tf.flags.DEFINE_integer("num_epochs", 200, "Number of training epochs (default: 200)")
+tf.flags.DEFINE_integer("evaluate_every", 100, "Evaluate model on dev set after this many steps (default: 100)")
+tf.flags.DEFINE_integer("checkpoint_every", 100, "Save model after this many steps (default: 100)")
 # Misc Parameters
-parser.add_argument("--checkpoint", type=str, default='', help="Resume checkpoint")
-parser.add_argument("--allow_soft_placement", type=bool, default=True, help="Allow device soft device placement")
-parser.add_argument("--log_device_placement", type=bool, default=False, help="Log placement of ops on devices")
-FLAGS = parser.parse_args()
+tf.flags.DEFINE_string("checkpoint", '', "Resume checkpoint")
+tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
+tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on devices")
 
-#tf.flags.DEFINE_integer("embedding_dim", 128, "Dimensionality of character embedding (default: 128)")
-#tf.flags.DEFINE_string("filter_sizes", "1,2,3,4,5,6,8", "Comma-separated filter sizes (default: '1,2,3,4,5,6,8')")
-#tf.flags.DEFINE_string("num_filters", "50,100,150,150,200,200,200", "Number of filters per filter size (default: 50,100,150,150,200,200,200)")
-#tf.flags.DEFINE_float("dropout_keep_prob", 0.5, "Dropout keep probability (default: 0.5)")
-#tf.flags.DEFINE_float("l2_reg_lambda", 0.0, "L2 regularizaion lambda (default: 0.0)")
-#
-## Training parameters
-#tf.flags.DEFINE_integer("batch_size", 32, "Batch Size (default: 32)")
-#tf.flags.DEFINE_integer("num_epochs", 200, "Number of training epochs (default: 200)")
-#tf.flags.DEFINE_integer("evaluate_every", 100, "Evaluate model on dev set after this many steps (default: 100)")
-#tf.flags.DEFINE_integer("checkpoint_every", 100, "Save model after this many steps (default: 100)")
-## Misc Parameters
-#tf.flags.DEFINE_string("checkpoint", '', "Resume checkpoint")
-#tf.flags.DEFINE_boolean("allow_soft_placement", True, "Allow device soft device placement")
-#tf.flags.DEFINE_boolean("log_device_placement", False, "Log placement of ops on devices")
-#
-#FLAGS = tf.flags.FLAGS
-#print("\nParameters:")
-#for attr, value in sorted(FLAGS.__flags.iteritems()):
-#    print("{}={}".format(attr.upper(), value))
-#print("")
+FLAGS = tf.flags.FLAGS
+print("\nParameters:")
+for attr, value in sorted(FLAGS.__flags.iteritems()):
+    print("{:25s}={}".format(attr.upper(), value.value))
+print("")
 
 
 # Data Preparatopn
